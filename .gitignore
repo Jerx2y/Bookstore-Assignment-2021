@@ -1,0 +1,8 @@
+.idea/
+cmake-build-*/
+test*/
+asset/
+bin/
+.github
+*~
+
