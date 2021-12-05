@@ -8,9 +8,9 @@
 
 using std::string;
 using std::vector;
-const int kSize = 3500;
-const int kLimit = 3333;
-const int ksLimit = 2222;
+const int kSize = 520;
+const int kLimit = 500;
+const int ksLimit = 400;
 
 class Node {
 public:
@@ -42,7 +42,7 @@ public:
     Block add(const Node&);
     bool dec(const Node&);
     void print() {
-        std::cout << size << " " << std::endl;
+        std::cout << " # # # # # " << size << " " << std::endl;
         for (int i = 0; i < size; ++i)
             std::cout << array_[i].first << std::endl;
     }
@@ -88,7 +88,7 @@ public:
     void query(const string &var, int &lpos, int &rpos) {
         lpos = 0, rpos = size - 1;
         // std::cout << var << " : " << std::endl;
-        for (int i = size; i; --i) {
+        for (int i = size; i; --i) { // TODO
             string tmp = maxvar[i - 1].first;
             // std::cout << tmp << " " << var << std::endl;
             if (tmp < var) {
@@ -97,7 +97,7 @@ public:
             }
         }
         for (int i = 0; i < size; ++i) {
-            string tmp = maxvar[i - 1].first;
+            string tmp = maxvar[i].first;
             if (var < tmp) {
                 rpos = i;
                 break;
@@ -115,6 +115,16 @@ public:
     void insert(const string &, const int &, const int &);
     void erase(const string &, const int &, const int &);
     void query(const string&, vector<int>&);
+    void show() {
+        BlockIndex it;
+        blockindex_.read(it);
+        for (int i = 0; i < it.size; ++i) {
+            int off = it.offset[i];
+            Block b;
+            block_.read(b, off);
+            b.print();
+        }
+    }
 };
 
 #endif

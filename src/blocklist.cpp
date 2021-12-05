@@ -38,7 +38,7 @@ void Block::merge(Block &obj) {
 Block Block::split() {
     Block res;
     res.size = size / 2;
-    for (int i = size - 1, j = 0; j < res.size; --i, ++j)
+    for (int i = size - 1, j = res.size - 1; j >= 0; --i, --j)
         res.array_[j] = array_[i], array_[i] = Node();
     size -= res.size;
     return res;
@@ -96,12 +96,12 @@ void BlockList::insert(const string &fir, const int &scd, const int &val) {
     else ipos = 0, index.getoffset(ipos) = block_.write(curblock);
     Block extend = curblock.add(var);
     // curblock.print();
-    block_.update(curblock, index.getoffset(ipos));
     // std::cout << " &&&&&& " << index.maxvar[0].first << std::endl;
     if (!extend.empty()) {
         int offset = block_.write(extend);
         index.extend(curblock.maxvar(), extend.maxvar(), offset, ipos + 1);
     }
+    block_.update(curblock, index.getoffset(ipos));
     blockindex_.update(index, 0);
 }
 
@@ -133,12 +133,12 @@ void BlockList::query(const string &var, vector<int> &res) {
     blockindex_.read(index);
     int lpos, rpos;
     index.query(var, lpos, rpos);
-    // std::cout << lpos << " # " << rpos << std::endl;
     for (int i = lpos; i <= rpos; ++i) {
         Block curblock;
         block_.read(curblock, index.getoffset(i));
-        for (int j = 0; j < curblock.size; ++j)
+        for (int j = 0; j < curblock.size; ++j) {
             if (var == curblock.array_[j].first)
                 res.push_back(curblock.array_[j].offset_);
+        }
     }
 }
