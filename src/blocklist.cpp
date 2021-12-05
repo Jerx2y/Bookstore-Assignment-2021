@@ -120,15 +120,15 @@ void BlockList::erase(const string &fir, const int &scd, const int &val) {
     Block curblock;
     block_.read(curblock, index.getoffset(ipos));
     curblock.dec(var);
-    if (index.inrange(ipos + 1)) {
-        Block nxtblock;
-        block_.read(nxtblock, index.getoffset(ipos + 1));
-        if (curblock.size + nxtblock.size < ksLimit) {
-            block_.Delete(index.getoffset(ipos + 1));
-            curblock.merge(nxtblock);
-            index.shrink(curblock.maxvar, ipos + 1);
-        }
-    }
+//    if (index.inrange(ipos + 1)) {
+//        Block nxtblock;
+//        block_.read(nxtblock, index.getoffset(ipos + 1));
+//        if (curblock.size + nxtblock.size < ksLimit) {
+//            block_.Delete(index.getoffset(ipos + 1));
+//            curblock.merge(nxtblock);
+//            index.shrink(curblock.maxvar, ipos + 1);
+//        }
+//    }
     blockindex_.update(index, 0);
     block_.update(curblock, index.getoffset(ipos));
 }

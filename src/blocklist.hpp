@@ -8,9 +8,9 @@
 
 using std::string;
 using std::vector;
-const int kSize = 5555;
-const int kLimit = 3333;
-const int ksLimit = 2222;
+const int kSize = 400;
+const int kLimit = 333;
+const int ksLimit = 222;
 
 class Node {
 public:
