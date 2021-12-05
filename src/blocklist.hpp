@@ -67,7 +67,7 @@ public:
     }
     void extend(const Node &cvar, const Node &var, const int _offset, const int &ipos) {
         size++;
-        for (int i = size - 1; i > ipos; ++i) {
+        for (int i = size - 1; i > ipos; --i) {
             maxvar[i] = maxvar[i - 1];
             offset[i] = offset[i - 1];
         }
