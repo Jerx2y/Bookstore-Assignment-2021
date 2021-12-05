@@ -33,17 +33,14 @@ void Block::merge(Block &obj) {
     for (int i = 0; i < rpos; ++i)
         array_[i] = res[i];
     size = rpos;
-    maxvar = array_[size - 1];
 }
 
 Block Block::split() {
     Block res;
     res.size = size / 2;
-    res.maxvar = maxvar;
     for (int i = size - 1, j = 0; j < res.size; --i, ++j)
         res.array_[j] = array_[i], array_[i] = Node();
     size -= res.size;
-    maxvar = array_[size - 1];
     return res;
 }
 
@@ -62,7 +59,6 @@ Block Block::add(const Node &var) {
     for (int i = size - 1; i > targetpos; --i)
         array_[i] = array_[i - 1];
     array_[targetpos] = var;
-    maxvar = array_[size - 1];
     if (size > kLimit) return split();
     else return Block();
 }
@@ -79,8 +75,6 @@ bool Block::dec(const Node &var) {
     for (int i = ipos; i < size; ++i)
         array_[i] = array_[i + 1];
     array_[size] = Node();
-    if (size) maxvar = array_[size - 1];
-    else maxvar = Node();
     return true;
 }
 
@@ -106,7 +100,7 @@ void BlockList::insert(const string &fir, const int &scd, const int &val) {
     // std::cout << " &&&&&& " << index.maxvar[0].first << std::endl;
     if (!extend.empty()) {
         int offset = block_.write(extend);
-        index.extend(curblock.maxvar, extend.maxvar, offset, ipos + 1);
+        index.extend(curblock.maxvar(), extend.maxvar(), offset, ipos + 1);
     }
     blockindex_.update(index, 0);
 }
@@ -126,7 +120,7 @@ void BlockList::erase(const string &fir, const int &scd, const int &val) {
         if (curblock.size + nxtblock.size < ksLimit) {
             block_.Delete(index.getoffset(ipos + 1));
             curblock.merge(nxtblock);
-            index.shrink(curblock.maxvar, ipos + 1);
+            index.shrink(curblock.maxvar(), ipos + 1);
         }
     }
     blockindex_.update(index, 0);

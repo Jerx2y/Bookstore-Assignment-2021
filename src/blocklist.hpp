@@ -8,9 +8,9 @@
 
 using std::string;
 using std::vector;
-const int kSize = 3340;
-const int kLimit = 3333;
-const int ksLimit = 2222;
+const int kSize = 350;
+const int kLimit = 333;
+const int ksLimit = 222;
 
 class Node {
 public:
@@ -34,15 +34,15 @@ class Block {
 public:
     Node array_[kSize];
     int size;
-    Node maxvar;
     Block() { size = 0; }
     bool empty() const { return !size; }
+    Node maxvar() { return size ? array_[size - 1] : Node(); }
     void merge(Block&);
     Block split();
     Block add(const Node&);
     bool dec(const Node&);
     void print() {
-        std::cout << size << " " << maxvar.first << std::endl;
+        std::cout << size << " " << std::endl;
         for (int i = 0; i < size; ++i)
             std::cout << array_[i].first << std::endl;
     }
@@ -81,6 +81,8 @@ public:
             offset[i] = offset[i + 1];
         }
         --size;
+        maxvar[size] = Node();
+        offset[size] = 0;
         maxvar[ipos - 1] = cvar;
     }
     void query(const string &var, int &lpos, int &rpos) {
