@@ -22,8 +22,10 @@ int main() {
         int val;
         cin >> opt >> idx;
         if (opt == "insert") {
+            // cout << " ### " << endl;
             cin >> val;
             index.insert(idx, val, val);
+            // cout << " @@@ " << endl;
         }
         if (opt == "delete") {
             cin >> val;

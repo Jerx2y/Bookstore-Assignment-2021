@@ -41,6 +41,11 @@ public:
     Block split();
     Block add(const Node&);
     bool dec(const Node&);
+    void print() {
+        std::cout << size << " " << maxvar.first << std::endl;
+        for (int i = 0; i < size; ++i)
+            std::cout << array_[i].first << std::endl;
+    }
 };
 
 class BlockIndex {
@@ -55,7 +60,7 @@ public:
         for (int i = 0; i < size; ++i) {
             if (maxvar[i] < var) continue;
             ipos = i;
-            break;
+            return ;
         }
         if (size) ipos = size - 1, maxvar[ipos] = var;
         else size = 1, maxvar[0] = var;
@@ -80,16 +85,22 @@ public:
     }
     void query(const string &var, int &lpos, int &rpos) {
         lpos = 0, rpos = size - 1;
-        for (int i = size; i; --i)
-            if (maxvar[i - 1].first < var) {
+        // std::cout << var << " : " << std::endl;
+        for (int i = size; i; --i) {
+            string tmp = maxvar[i - 1].first;
+            // std::cout << tmp << " " << var << std::endl;
+            if (tmp < var) {
                 lpos = i;
                 break;
             }
-        for (int i = 0; i < size; ++i)
-            if (var < maxvar[i].first) {
+        }
+        for (int i = 0; i < size; ++i) {
+            string tmp = maxvar[i - 1].first;
+            if (var < tmp) {
                 rpos = i;
                 break;
             }
+        }
     }
 };
 

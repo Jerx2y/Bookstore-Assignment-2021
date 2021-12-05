@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <cstring>
 #include <sstream>
 #include <fstream>
 
@@ -10,11 +11,12 @@ using std::string;
 using std::vector;
 
 bool Node::operator<(const Node &rhs) const {
-    return first < rhs.first || (first == rhs.first && second < rhs.second);
+    return strcmp(first, rhs.first) < 0 || (!strcmp(first, rhs.first) && second < rhs.second);
+    // TODO
 }
 
 bool Node::operator==(const Node &rhs) const {
-    return first == rhs.first && second == rhs.second;
+    return !strcmp(first, rhs.first) && second == rhs.second;
 }
 
 void Block::merge(Block &obj) {
@@ -50,6 +52,8 @@ Block Block::add(const Node &var) {
     for (int i = 0; i < size; ++i) {
         if (array_[i] < var) continue;
         targetpos = i;
+        // std::cout << (var < array_[i]) << " " << (var.first < array_[i].first) << std::endl;
+        // std::cout << "$"<< var.first << "$$" << array_[i].first <<"$"<< std::endl;
         break;
     }
     if (targetpos == -1)
@@ -86,20 +90,22 @@ void BlockList::insert(const string &fir, const int &scd, const int &val) {
     Node var(fir, scd, val);
     BlockIndex index;
     blockindex_.read(index);
+    // std::cout << " !!! " << index.maxvar[0].first << std::endl;
     int ipos = -1;
     index.find(var, ipos);
+    // std::cout << " !@# " << index.maxvar[0].first << std::endl;
     Block curblock;
     if (ipos != -1) block_.read(curblock, index.getoffset(ipos));
     else ipos = 0, index.getoffset(ipos) = block_.write(curblock);
-    // std::cout << "@#$" << index.getoffset(ipos) << std::endl;
-    // std::cout << "@@@ " << curblock.size << " " << curblock.maxvar.first << std::endl;
     Block extend = curblock.add(var);
-    // std::cout << "$$$ " << curblock.size << " " << curblock.maxvar.first << std::endl;
+    // curblock.print();
     block_.update(curblock, index.getoffset(ipos));
-    blockindex_.write(index);
-    if (!extend.empty()) return ;
-    int offset = block_.write(extend);
-    index.extend(curblock.maxvar, extend.maxvar, offset, ipos + 1);
+    // std::cout << " &&&&&& " << index.maxvar[0].first << std::endl;
+    if (!extend.empty()) {
+        int offset = block_.write(extend);
+        index.extend(curblock.maxvar, extend.maxvar, offset, ipos + 1);
+    }
+    blockindex_.update(index, 0);
 }
 
 void BlockList::erase(const string &fir, const int &scd, const int &val) {
@@ -118,7 +124,7 @@ void BlockList::erase(const string &fir, const int &scd, const int &val) {
             block_.Delete(index.getoffset(ipos + 1));
             curblock.merge(nxtblock);
             index.shrink(curblock.maxvar, ipos + 1);
-            blockindex_.write(index);
+            blockindex_.update(index, 0);
         }
     }
     block_.update(curblock, index.getoffset(ipos));
@@ -130,6 +136,7 @@ void BlockList::query(const string &var, vector<int> &res) {
     blockindex_.read(index);
     int lpos, rpos;
     index.query(var, lpos, rpos);
+    // std::cout << lpos << " # " << rpos << std::endl;
     for (int i = lpos; i <= rpos; ++i) {
         Block curblock;
         block_.read(curblock, index.getoffset(i));
