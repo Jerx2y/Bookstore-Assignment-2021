@@ -78,6 +78,9 @@ bool Block::dec(const Node &var) {
     size--;
     for (int i = ipos; i < size; ++i)
         array_[i] = array_[i + 1];
+    array_[size] = Node();
+    if (size) maxvar = array_[size - 1];
+    else maxvar = Node();
     return true;
 }
 
@@ -124,9 +127,9 @@ void BlockList::erase(const string &fir, const int &scd, const int &val) {
             block_.Delete(index.getoffset(ipos + 1));
             curblock.merge(nxtblock);
             index.shrink(curblock.maxvar, ipos + 1);
-            blockindex_.update(index, 0);
         }
     }
+    blockindex_.update(index, 0);
     block_.update(curblock, index.getoffset(ipos));
 }
 
