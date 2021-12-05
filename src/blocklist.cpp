@@ -40,7 +40,7 @@ Block Block::split() {
     Block res;
     res.size = size / 2;
     res.maxvar = maxvar;
-    for (int i = size - 1, j = 0; j < res.size; ++i, ++j)
+    for (int i = size - 1, j = 0; j < res.size; --i, ++j)
         res.array_[j] = array_[i], array_[i] = Node();
     size -= res.size;
     maxvar = array_[size - 1];
