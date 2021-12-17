@@ -4,31 +4,22 @@
 #include <sstream>
 #include <fstream>
 
-#include "blocklist.hpp"
-#include "memoryriver.hpp"
+#include "ull.h"
+#include "storage.h"
 
 using std::string;
 using std::vector;
 
 Node::Node() {
     offset_ = 0;
-    memset(first, 0, sizeof first);
-}
-
-Node::Node(string fir, int sec, int val) {
-    memset(first, 0, sizeof first);
-    for (int i = 0, sz = fir.size(); i < sz; ++i)
-        first[i] = fir[i];
-    second = sec, offset_ = val;
 }
 
 bool Node::operator<(const Node &rhs) const {
-    return strcmp(first, rhs.first) < 0 || (!strcmp(first, rhs.first) && second < rhs.second);
-    // TODO
+    return first < rhs.first || (first == rhs.first && second < rhs.second);
 }
 
 bool Node::operator==(const Node &rhs) const {
-    return !strcmp(first, rhs.first) && second == rhs.second;
+    return first == rhs.first && second == rhs.second;
 }
 Block::Block() { size = 0; }
 
@@ -135,79 +126,19 @@ void BlockIndex::shrink(const Node &cvar, const int &ipos) {
     maxvar[ipos - 1] = cvar;
 }
 
-void BlockIndex::query(const string &var, int &lpos, int &rpos) {
-    lpos = 0, rpos = size - 1;
-    for (int i = size; i; --i) {
-        if (maxvar[i - 1].first < var) {
-            lpos = i;
-            break;
-        }
-    }
-    for (int i = 0; i < size; ++i) {
-        if (var < maxvar[i - 1].first) {
-            rpos = i;
-            break;
-        }
-    }
-}
-
-void BlockList::initialize(const string& filename) {
+void Ull::initialize(const string& filename) {
     blockindex_.initialise(filename + ".idx.bin");
     block_.initialise(filename + ".bin");
 }
 
-void BlockList::insert(const string &fir, const int &scd, const int &val) {
-    Node var(fir, scd, val);
-    BlockIndex index;
-    blockindex_.read(index);
-    int ipos = -1;
-    index.find(var, ipos);
-    Block curblock;
-    if (ipos != -1) block_.read(curblock, index.getoffset(ipos));
-    else ipos = 0, index.getoffset(ipos) = block_.write(curblock);
-    Block extend = curblock.add(var);
-    if (!extend.empty()) {
-        int offset = block_.write(extend);
-        index.extend(curblock.maxvar(), extend.maxvar(), offset, ipos + 1);
-    }
-    block_.update(curblock, index.getoffset(ipos));
-    blockindex_.update(index, 0);
-}
-
-void BlockList::erase(const string &fir, const int &scd, const int &val) {
-    Node var(fir, scd, val);
-    BlockIndex index;
-    blockindex_.read(index);
-    int ipos;
-    index.find(var, ipos);
-    Block curblock;
-    block_.read(curblock, index.getoffset(ipos));
-    curblock.dec(var);
-    if (index.inrange(ipos + 1)) {
-        Block nxtblock;
-        block_.read(nxtblock, index.getoffset(ipos + 1));
-        if (curblock.size + nxtblock.size < ksLimit) {
-            block_.Delete(index.getoffset(ipos + 1));
-            curblock.merge(nxtblock);
-            index.shrink(curblock.maxvar(), ipos + 1);
-        }
-    }
-    blockindex_.update(index, 0);
-    block_.update(curblock, index.getoffset(ipos));
-}
-
-void BlockList::query(const string &var, vector<int> &res) {
+void Ull::getall(vector<int> &res) {
     res.clear();
     BlockIndex index;
     blockindex_.read(index);
-    int lpos, rpos;
-    index.query(var, lpos, rpos);
-    for (int i = lpos; i <= rpos; ++i) {
+    for (int i = 0; i < index.size; ++i) {
         Block curblock;
         block_.read(curblock, index.getoffset(i));
-        for (int j = 0; j < curblock.size; ++j) {
-            if (var == curblock.array_[j].first)
-                res.push_back(curblock.array_[j].offset_);
-        }
+        for (int j = 0; j < curblock.size; ++j)
+            res.push_back(curblock.array_[j].offset_);
     }
 }

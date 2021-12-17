@@ -1,9 +1,8 @@
-#ifndef BOOKSTORE_MEMORYRIVER_HPP_
-#define BOOKSTORE_MEMORYRIVER_HPP_
+#ifndef BOOKSTORE_ASSIGNMENT_STORAGE_H_
+#define BOOKSTORE_ASSIGNMENT_STORAGE_H_
 
 #include <fstream>
 #include <iostream>
-#include <queue>
 
 using std::string;
 using std::fstream;
@@ -11,24 +10,41 @@ using std::ifstream;
 using std::ofstream;
 
 template<class T>
-class MemoryRiver {
+class Storage {
 private:
     fstream file;
     string file_name;
     int sizeofT = sizeof(T);
-    std::queue<long> q;
 public:
-    MemoryRiver() = default;
+    Storage() = default;
 
-    void initialise(string FN = "", int opt = 0) {
+    bool initialise(string FN = "", int opt = 0) {
         file_name = FN;
-        while (!q.empty()) q.pop();
         file.open(file_name);
         if (!file) {
             file.open(file_name, std::ios::out);
-            T t;
-            if (opt) file.write(reinterpret_cast<char*> (&t), sizeofT);
+            for (int i = 1, x = 0; i <= opt; ++i)
+                file.write(reinterpret_cast<char*> (&x), sizeof(int));
+            file.close();
+            return 0;
         }
+        file.close();
+        return 1;
+    }
+
+    //读出第n个int的值赋给tmp，1_base
+    void get_info(int &tmp, int n) {
+        file.open(file_name);
+        file.seekg((n - 1) * sizeof(int));
+        file.read(reinterpret_cast<char*> (&tmp), sizeof(int));
+        file.close();
+    }
+
+    //将tmp写入第n个int的位置，1_base
+    void write_info(int tmp, int n) {
+        file.open(file_name);
+        file.seekp((n - 1) * sizeof(int));
+        file.write(reinterpret_cast<char*> (&tmp), sizeof(int));
         file.close();
     }
 
@@ -37,10 +53,7 @@ public:
     //位置索引index可以取为对象写入的起始位置
     int write(T &t) {
         file.open(file_name);
-        if (!q.empty()) {
-            file.seekp(q.front(), std::ios::beg);
-            q.pop();
-        } else file.seekp(0, std::ios::end);
+        file.seekp(0, std::ios::end);
         int res = file.tellp();
         file.write(reinterpret_cast<char*> (&t), sizeofT);
         file.close();
@@ -65,9 +78,8 @@ public:
 
     //删除位置索引index对应的对象(不涉及空间回收时，可忽略此函数)，保证调用的index都是由write函数产生
     void Delete(int index) {
-        q.push(index);
     }
 };
 
 
-#endif //BPT_MEMORYRIVER_HPP
+#endif
