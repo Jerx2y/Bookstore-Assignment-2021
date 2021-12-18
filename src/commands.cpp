@@ -259,13 +259,14 @@ void buyBook(const string &isbn, const int &quantity) {
     bookisbn.query(nowisbn, offset);
     assert(offset.size() <= 1);
     if (!offset.size())
-        throw Exception("buy: Can't Buy NULL !");
+        throw Exception("buy: book doesn't exist");
     Book now;
     book.read(now, offset[0]);
     if (now.stock < quantity)
-        throw Exception("buy: Can't buy more than it has !");
+        throw Exception("buy: book is not enough");
     takeFinance(quantity * now.price);
-    std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2) << quantity * now.price << std::endl;
+    std::cout << std::setiosflags(std::ios::fixed) <<\
+        std::setprecision(2) << quantity * now.price << std::endl;
     now.stock -= quantity;
     book.update(now, offset[0]);
 }
@@ -351,6 +352,7 @@ void selectBook(const string &isbn) {
 // Finance
 
 void showFinance(int t) {
+    stack.check(4);
     if (!t)
         return std::cout << std::endl, void();
 
@@ -358,21 +360,21 @@ void showFinance(int t) {
     transaction.get_info(total, 1);
     if (t > total)
         throw Exception("show finance: too many times");
+
     if (t == -1) t = total;
 
-    double income = 0, outcome = 0;
+    double income = 0, expense = 0;
     Transaction tmp;
     int delta = sizeof(Transaction);
     int pos = (total - t) * delta + sizeof(int);
     while (t--) {
         transaction.read(tmp, pos);
         if (tmp.opt == 1) income += tmp.var;
-        else outcome += tmp.var;
+        else expense += tmp.var;
         pos += delta;
     }
-
     std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2)\
-        << "+ " << income << " - " << outcome << std::endl;
+        << "+ " << income << " - " << expense << std::endl;
 }
 
 void takeFinance(double var) {
