@@ -3,11 +3,19 @@
 void getCommand(const string &command, Option &opt, string &var) {
     var.clear();
     if (command[1] == 'I') {
+        if (command.size() <= 6)
+            throw Exception("modify: -ISBN = NULL");
+        if (command.substr(0, 6) != "-ISBN=") 
+            throw Exception("error");
         opt = ISBN;
         for (int i = 6, sz = command.size(); i < sz; ++i)
             var += command[i]; 
         checkstring2(var, 20);
     } else if (command[1] == 'n') {
+        if (command.size() <= 8)
+            throw Exception("modify: -ISBN = NULL");
+        if (command.substr(0, 6) != "-name=") 
+            throw Exception("error");
         opt = NAME;
         if (command[6] != '"'|| command[command.size() - 1] != '"')
             throw Exception("error");
@@ -15,6 +23,10 @@ void getCommand(const string &command, Option &opt, string &var) {
             var += command[i];
         checkstring2(var, 60);
     } else if (command[1] == 'a') {
+        if (command.size() <= 10)
+            throw Exception("modify: -ISBN = NULL");
+        if (command.substr(0, 8) != "-author=") 
+            throw Exception("error");
         opt = AUTHOR;
         if (command[8] != '"'|| command[command.size() - 1] != '"')
             throw Exception("error");
@@ -22,6 +34,10 @@ void getCommand(const string &command, Option &opt, string &var) {
             var += command[i];
         checkstring2(var, 60);
     } else if (command[1] == 'k') {
+        if (command.size() <= 11)
+            throw Exception("modify: -ISBN = NULL");
+        if (command.substr(0, 9) != "-keyword=") 
+            throw Exception("error");
         opt = KEYWORD;
         if (command[9] != '"'|| command[command.size() - 1] != '"')
             throw Exception("error");
@@ -72,8 +88,10 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             if (visisbn)
                 throw Exception("modify: multi-ISBN");
             visisbn = 1;
-            if (command.size() == 6)
+            if (command.size() <= 6)
                 throw Exception("modify: -ISBN = NULL");
+            if (command.substr(0, 6) != "-ISBN=") 
+                throw Exception("error");
             string var;
             for (int i = 6, sz = command.size(); i < sz; ++i)
                 var += command[i]; 
@@ -87,8 +105,10 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             if (visname)
                 throw Exception("modify: multi-bookname");
             visname = 1;
-            if (command.size() == 8)
+            if (command.size() <= 8)
                 throw Exception("modify: -name = NULL");
+            if (command.substr(0, 6) != "-name=") 
+                throw Exception("error");
             if (command[6] != '"'|| command[command.size() - 1] != '"')
                 throw Exception("error");
             int cnt = 0;
@@ -101,8 +121,10 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             if (visauthor)
                 throw Exception("modify: multi-author");
             visauthor = 1;
-            if (command.size() == 10)
+            if (command.size() <= 10)
                 throw Exception("-author = NULL");
+            if (command.substr(0, 8) != "-author=") 
+                throw Exception("error");
             if (command[8] != '"'|| command[command.size() - 1] != '"')
                 throw Exception("error");
             int cnt = 0;
@@ -115,8 +137,10 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             if (viskeyword)
                 throw Exception("modify: multi-keyword");
             viskeyword = 1;
-            if (command.size() == 11)
+            if (command.size() <= 11)
                 throw Exception("-keyword = NULL");
+            if (command.substr(0, 9) != "-keyword=") 
+                throw Exception("error");
             if (command[9] != '"'|| command[command.size() - 1] != '"')
                 throw Exception("error");
             multiKeywordCheck(command);
@@ -130,8 +154,10 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             if (visprice)
                 throw Exception("modify: multi-price");
             visprice=1;
-            if (command.size() == 7) 
+            if (command.size() <= 7) 
                 throw Exception("-price = NULL");
+            if (command.substr(0, 7) != "-price=") 
+                throw Exception("error");
             int cnt = 0;
             for (int i = 7; i < command.size(); ++i, ++cnt)
                 if (command[i] != '.' && !isdigit(command[i]))
