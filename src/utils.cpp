@@ -9,16 +9,22 @@ void getCommand(const string &command, Option &opt, string &var) {
         checkstring2(var, 20);
     } else if (command[1] == 'n') {
         opt = NAME;
+        if (command[6] != '"'|| command[command.size() - 1] != '"')
+            throw Exception("error");
         for (int i = 7, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
         checkstring2(var, 60);
     } else if (command[1] == 'a') {
         opt = AUTHOR;
+        if (command[8] != '"'|| command[command.size() - 1] != '"')
+            throw Exception("error");
         for (int i = 9, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
         checkstring2(var, 60);
     } else if (command[1] == 'k') {
         opt = KEYWORD;
+        if (command[9] != '"'|| command[command.size() - 1] != '"')
+            throw Exception("error");
         for (int i = 10, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
         checkstring2(var, 60);
@@ -83,6 +89,8 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             visname = 1;
             if (command.size() == 8)
                 throw Exception("modify: -name = NULL");
+            if (command[6] != '"'|| command[command.size() - 1] != '"')
+                throw Exception("error");
             int cnt = 0;
             for (int i = 7, sz = command.size(); i < sz - 1; ++i, ++cnt)
                 if (command[i] == '\"' || iscntrl(command[i]))
@@ -95,6 +103,8 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             visauthor = 1;
             if (command.size() == 10)
                 throw Exception("-author = NULL");
+            if (command[8] != '"'|| command[command.size() - 1] != '"')
+                throw Exception("error");
             int cnt = 0;
             for (int i = 9, sz = command.size(); i < sz - 1; ++i, ++cnt)
                 if (command[i] == '\"' || iscntrl(command[i]))
@@ -107,6 +117,8 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             viskeyword = 1;
             if (command.size() == 11)
                 throw Exception("-keyword = NULL");
+            if (command[9] != '"'|| command[command.size() - 1] != '"')
+                throw Exception("error");
             multiKeywordCheck(command);
             int cnt = 0;
             for (int i = 10, sz = command.size(); i < sz - 1; ++i, ++cnt)
