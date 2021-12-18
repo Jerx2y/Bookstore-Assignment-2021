@@ -6,23 +6,28 @@ void getCommand(const string &command, Option &opt, string &var) {
         opt = ISBN;
         for (int i = 6, sz = command.size(); i < sz; ++i)
             var += command[i]; 
+        checkstring2(var, 20);
     } else if (command[1] == 'n') {
         opt = NAME;
         for (int i = 7, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
+        checkstring2(var, 60);
     } else if (command[1] == 'a') {
         opt = AUTHOR;
         for (int i = 9, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
+        checkstring2(var, 60);
     } else if (command[1] == 'k') {
         opt = KEYWORD;
         for (int i = 10, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
+        checkstring2(var, 60);
     } else if (command[1] == 'p') {
         opt = PRICE;
         for (int i = 7; i < command.size(); ++i)
             var += command[i];
-    }
+        checkdouble(var, 13);
+    } else throw Exception("error");
 }
 
 void checkLen(const string &str, const int &maxLength) {
@@ -49,9 +54,6 @@ bool getCommand(std::string &line, std::vector<string> &command) {
         } else tmp += ch;
     }
 
-    if (isquote)
-        throw Exception("wrong \"");
-    
     if (!tmp.empty())
         command.push_back(tmp);
     return 1;
