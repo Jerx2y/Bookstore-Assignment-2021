@@ -66,6 +66,7 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             string var;
             for (int i = 6, sz = command.size(); i < sz; ++i)
                 var += command[i]; 
+            checkstring2(var, 20);
             std::vector<int> res;
             Varchar<20> isbn(var);
             book.query(isbn, res);
@@ -79,7 +80,7 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
                 throw Exception("modify: -name = NULL");
             int cnt = 0;
             for (int i = 7, sz = command.size(); i < sz - 1; ++i, ++cnt)
-                if (command[i] == '\"')
+                if (command[i] == '\"' || iscntrl(command[i]))
                     throw Exception("modify: -name \" is invalid"); 
             if (cnt > 60)
                 throw Exception("modify: -name: string is too long");
@@ -91,7 +92,7 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
                 throw Exception("-author = NULL");
             int cnt = 0;
             for (int i = 9, sz = command.size(); i < sz - 1; ++i, ++cnt)
-                if (command[i] == '\"')
+                if (command[i] == '\"' || iscntrl(command[i]))
                     throw Exception("modify: -author \" is invalid"); 
             if (cnt > 60)
                 throw Exception("modify: -author: string is too long");
@@ -104,7 +105,7 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             multiKeywordCheck(command);
             int cnt = 0;
             for (int i = 10, sz = command.size(); i < sz - 1; ++i, ++cnt)
-                if (command[i] == '\"')
+                if (command[i] == '\"' || iscntrl(command[i]))
                     throw Exception("modify: -keyword \" is invalid"); 
             if (cnt > 60)
                 throw Exception("modify: -keyword: string is too long");

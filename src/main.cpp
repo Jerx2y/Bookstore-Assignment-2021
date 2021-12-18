@@ -42,7 +42,7 @@ bool run(std::vector<string> command) {
         if (command.size() == 3)
             changePassword(command[1], command[2]);
         else {
-            checkstring2(command[3], 30);
+            checkstring1(command[3], 30);
             changePassword(command[1], command[2], command[3]);
         }
     } else if (command[0] == "useradd") {
@@ -68,6 +68,8 @@ bool run(std::vector<string> command) {
         if (command.size() == 1) showBook();
         else if (command[1] != "finance") {
             // TODO: maby need to check
+            if (command.size() != 2)
+                throw Exception("show -: invalid commands numbers");
             showBook(command[1]);
         } else if (command.size() == 2) showFinance();
         else if (command.size() == 3) {
