@@ -34,7 +34,8 @@ bool getCommand(std::vector<string> &command) {
     command.clear();
     string line, tmp;
     tmp.clear();
-    getline(std::cin, line);
+    if (!getline(std::cin, line))
+        return false;
     bool isquote = 0;
     for (auto ch : line) {
         if (ch == '"') isquote ^= 1;
@@ -44,9 +45,10 @@ bool getCommand(std::vector<string> &command) {
             tmp.clear();
         } else tmp += ch;
     }
+    
     if (!tmp.empty())
         command.push_back(tmp);
-    return command.size();
+    return 1;
 }
 
 void multiVarCheck(const std::vector<string>& var, Ull &book) {
