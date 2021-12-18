@@ -90,15 +90,15 @@ void getAccount(const string &id, Account &now, int &offset) {
     std::vector<int> res;
     userid.query(user_id, res);
     if (res.empty()) throw Exception("Find Nothing");
+    if (res.size() != 1) {
+        std::cout << res.size() << std::endl;
+        for (auto it : res) {
+            user.read(now, it);
+            std::cout << now.userId.str() << " " << now.name.str() << " " << now.password.str() << " # " << std::endl;
+        }
+        exit(0);
+    }
     assert(res.size() == 1);
-//    if (res.size() != 1) {
-//        std::cout << res.size() << std::endl;
-//        for (auto it : res) {
-//            user.read(now, it);
-//            std::cout << now.userId.str() << " " << now.name.str() << " " << now.password.str() << " # " << std::endl;
-//        }
-//        assert(0);
-//    }
     user.read(now, res[0]);
     offset = res[0];
 }
