@@ -330,22 +330,19 @@ void showBook(const string &cmd) {
     if (opt == ISBN) {
         Varchar<20> isbn(val);
         bookisbn.query(isbn, offset);
-    }
-    if (opt == NAME) {
+    } else if (opt == NAME) {
         Varchar<60> name(val);
         bookname.query(name, offset);
-    }
-    if (opt == AUTHOR) {
+    } else if (opt == AUTHOR) {
         Varchar<60> author(val);
         bookauthor.query(author, offset);
-    }
-    if (opt == KEYWORD) {
+    } else if (opt == KEYWORD) {
         for (auto at : val)
             if (at == '|')
                 throw Exception("show -keywrod: So many keywords");
         Varchar<60> keywd(val);
         bookkeyword.query(keywd, offset);
-    }
+    } else throw Exception("error");
     for (int k : offset) {
         Book now;
         book.read(now, k);
