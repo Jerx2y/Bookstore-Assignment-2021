@@ -126,6 +126,16 @@ void BlockIndex::shrink(const Node &cvar, const int &ipos) {
     maxvar[ipos - 1] = cvar;
 }
 
+void BlockIndex::erase(const int &pos) {
+    for (int i = pos; i + 1 < size; ++i) {
+        maxvar[i] = maxvar[i + 1];
+        offset[i] = offset[i + 1];
+    }
+    --size;
+    maxvar[size] = Node();
+    offset[size] = 0;
+}
+
 void Ull::initialize(const string& filename) {
     blockindex_.initialise(filename + ".idx.bin");
     block_.initialise(filename + ".bin");

@@ -90,6 +90,15 @@ void getAccount(const string &id, Account &now, int &offset) {
     std::vector<int> res;
     userid.query(user_id, res);
     if (res.empty()) throw Exception("Find Nothing");
+    assert(res.size() == 1);
+//    if (res.size() != 1) {
+//        std::cout << res.size() << std::endl;
+//        for (auto it : res) {
+//            user.read(now, it);
+//            std::cout << now.userId.str() << " " << now.name.str() << " " << now.password.str() << " # " << std::endl;
+//        }
+//        assert(0);
+//    }
     user.read(now, res[0]);
     offset = res[0];
 }
@@ -117,7 +126,7 @@ void login(const string &id, const string &password) {
     int offset;
     getAccount(id, now, offset);
     if (now.password.str() != password)
-        throw Exception("su: Password Wrong to login: " + now.password.str());
+        throw Exception("su: Password Wrong to login: " + now.password.str() + " instead of " + password);
     stack.push(now);
 }
 
@@ -183,7 +192,29 @@ void modifyBook(const vector<string> &var) {
         if (opt == ISBN) {
             checkLen(res, 20);
             bookisbn.erase(now.isbn, now.isbn, offset);
+            vector<int> kres;
+            keywordisbn.query(now.isbn, kres);
+            int cnt = 0;
+            for (int tnow : kres) {
+                ++cnt;
+                string t;
+                t.resize(2);
+                t[0] = cnt / 10 + '0';
+                t[1] = cnt % 10 + '0';
+                Varchar<2> odr(t);
+                keywordisbn.erase(now.isbn, odr, tnow);
+            }
             now.isbn = res;
+            cnt = 0;
+            for (int tnow : kres) {
+                ++cnt;
+                string t;
+                t.resize(2);
+                t[0] = cnt / 10 + '0';
+                t[1] = cnt % 10 + '0';
+                Varchar<2> odr(t);
+                keywordisbn.insert(now.isbn, odr, tnow);
+            }
             bookisbn.insert(now.isbn, now.isbn, offset);
             book.update(now, offset);
         } else if (opt == AUTHOR) {
@@ -248,7 +279,7 @@ void buyBook(const string &isbn, const int &quantity) {
     Varchar<20> nowisbn(isbn);
     vector<int> offset;
     bookisbn.query(nowisbn, offset);
-    if (offset.size() > 1) exit(0);
+    assert(offset.size() <= 1);
     if (!offset.size())
         throw Exception("buy: book doesn't exist");
     Book now;

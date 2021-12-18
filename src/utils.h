@@ -18,10 +18,18 @@ void getCommand(const string &, Option &, string &);
 
 void checkLen(const string &, const int &);
 
-bool getCommand(std::vector<string> &);
+bool getCommand(string&, std::vector<string> &);
 
 void multiKeywordCheck(const string &);
 
-void multiVarCheck(const std::vector<string> &, Ull&);
+void multiVarCheck(const vector<string> &, Ull&);
+
+void checkint(const string&, int);
+
+void checkdouble(const string&, int);
+
+void checkstring1(const string&, int);
+
+void checkstring2(const string&, int);
 
 #endif

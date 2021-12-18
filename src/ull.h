@@ -10,9 +10,9 @@
 using std::string;
 using std::vector;
 
-const int kSize = 2200;
-const int kLimit = 1800;
-const int ksLimit = 1600;
+const int kSize = 5200;
+const int kLimit = 5000;
+const int ksLimit = 3000;
 
 class Node {
 public:
@@ -51,6 +51,7 @@ public:
     void shrink(const Node &, const int &);
     template <int A>
     void query(const Varchar<A> &, int &, int &);
+    void erase(const int &);
 };
 
 class Ull {
@@ -128,6 +129,8 @@ void Ull::erase(const Varchar<A> &fir, const Varchar<B> &scd, const int &val) {
             index.shrink(curblock.maxvar(), ipos + 1);
         }
     }
+    if (curblock.empty())
+        index.erase(ipos);
     blockindex_.update(index, 0);
     block_.update(curblock, index.getoffset(ipos));
 }

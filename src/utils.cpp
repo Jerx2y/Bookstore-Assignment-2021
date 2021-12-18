@@ -30,12 +30,15 @@ void checkLen(const string &str, const int &maxLength) {
         throw Exception("len > maxlen");
 }
 
-bool getCommand(std::vector<string> &command) {
-    command.clear();
-    string line, tmp;
+bool getCommand(std::string &line, std::vector<string> &command) {
+    if (line.size() > 1024)
+        throw Exception("command: too long");
+    for (int i = 0, sz = line.size(); i < sz; ++i)
+        if (!isascii(line[i]))
+            throw Exception("command: isn't ASCII");
+    string tmp;
     tmp.clear();
-    if (!getline(std::cin, line))
-        return false;
+    command.clear();
     bool isquote = 0;
     for (auto ch : line) {
         if (ch == '"') isquote ^= 1;
@@ -133,5 +136,42 @@ void multiKeywordCheck(const string &kw) {
         } else tmp += kw[i];
     }
     if (vis[tmp])
-        throw Exception("keyword Reappeared");
+        throw Exception("modify -keyword: keyword Reappeared");
+}
+
+void checkint(const std::string &var, int len) {
+    if (var.size() > len)
+        throw Exception("int too long");
+    for (const auto &it : var)
+        if (!isdigit(it))
+            throw Exception("invalid char in int");
+}
+
+void checkdouble(const std::string & var, int len) {
+    if (var.size() > len)
+        throw Exception("double too long");
+    double visdot = 0;
+    for (const auto &it : var)
+        if (!isdigit(it))
+            if (it == '.') {
+                if (visdot)
+                    throw Exception("2 more . in double");
+                visdot = 1;
+            } else throw Exception("invalid char in double");
+}
+
+void checkstring1(const std::string &var, int len) {
+    if (var.size() > len)
+        throw Exception("string1 too long");
+    for (const auto &it : var)
+        if (!isdigit(it) && !isalpha(it) && it != '_')
+            throw Exception("invalid char in string1");
+}
+
+void checkstring2(const std::string &var, int len) {
+    if (var.size() > len)
+        throw Exception("string2 too long");
+    for (const auto &it : var)
+        if (iscntrl(it))
+            throw Exception("invalid char in string2");
 }
