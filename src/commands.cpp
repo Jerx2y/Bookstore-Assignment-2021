@@ -168,7 +168,7 @@ void userAdd(const string &id, const string &password, Privilege priority, const
 
 // Book
 
-void addBook(const int &quantity) {
+void addBook(const long long &quantity) {
     stack.check(2);
     int offset = stack.selected();
     Book now;
@@ -274,7 +274,7 @@ void modifyBook(const vector<string> &var) {
     }
 }
 
-void buyBook(const string &isbn, const int &quantity) {
+void buyBook(const string &isbn, const long long &quantity) {
     stack.check(0);
     Varchar<20> nowisbn(isbn);
     vector<int> offset;
