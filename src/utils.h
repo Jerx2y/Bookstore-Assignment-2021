@@ -22,7 +22,7 @@ bool getCommand(string&, std::vector<string> &);
 
 void multiKeywordCheck(const string &);
 
-void multiVarCheck(const vector<string> &, Ull&);
+void multiVarCheck(const vector<string> &, Ull&, const string&);
 
 void checkint(const string&, int);
 

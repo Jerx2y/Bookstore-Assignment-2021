@@ -198,12 +198,12 @@ void addBook(const long long &quantity) {
 
 void modifyBook(const vector<string> &var) {
     stack.check(2);
-    multiVarCheck(var, bookisbn);
-    for (const auto &com : var)
-        multiKeywordCheck(com);
     int offset = stack.selected();
     Book now;
     book.read(now, offset);
+    multiVarCheck(var, bookisbn, now.isbn.str());
+    for (const auto &com : var)
+        multiKeywordCheck(com);
     for (const auto &com : var) {
         Option opt;
         string res;
