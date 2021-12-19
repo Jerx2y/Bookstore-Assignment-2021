@@ -46,10 +46,6 @@ void getCommand(const string &command, Option &opt, string &var) {
         checkstring2(var, 60, '"');
     } else if (command[1] == 'p') {
         opt = PRICE;
-        if (command.size() <= 7) 
-            throw Exception("-price = NULL");
-        if (command.substr(0, 7) != "-price=") 
-            throw Exception("error");
         for (int i = 7; i < command.size(); ++i)
             var += command[i];
         checkdouble(var, 13);
@@ -85,7 +81,7 @@ bool getCommand(std::string &line, std::vector<string> &command) {
     return 1;
 }
 
-void multiVarCheck(const std::vector<string>& var, Ull &book, const string &nowisbn) {
+void multiVarCheck(const std::vector<string>& var, Ull &book) {
     bool visisbn(0), visname(0), visauthor(0), viskeyword(0), visprice(0);
     for (auto command : var) {
         if (command[1] == 'I') {
@@ -100,8 +96,6 @@ void multiVarCheck(const std::vector<string>& var, Ull &book, const string &nowi
             for (int i = 6, sz = command.size(); i < sz; ++i)
                 var += command[i]; 
             checkstring2(var, 20);
-            if (var == nowisbn)
-                continue;
             std::vector<int> res;
             Varchar<20> isbn(var);
             book.query(isbn, res);
