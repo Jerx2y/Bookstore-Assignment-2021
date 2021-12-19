@@ -132,8 +132,6 @@ int main() {
         try {
             getCommand(command, commands);
             if (commands.empty()) continue;
-            if (command[0] == ' ' || command.back() == ' ')
-                throw Exception("");
             if (!run(commands))
                 break;
         } catch (Exception ex) {
