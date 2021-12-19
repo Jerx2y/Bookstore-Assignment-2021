@@ -68,6 +68,7 @@ bool getCommand(std::string &line, std::vector<string> &command) {
     command.clear();
     bool isquote = 0;
     for (auto ch : line) {
+        if (ch == '"') isquote ^= 1;
         if ((isquote == 0 && ch == ' ') || ch == '\n') {
             if (!tmp.empty())
                 command.push_back(tmp);
