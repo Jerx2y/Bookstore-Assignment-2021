@@ -56,6 +56,22 @@ Ull keywordisbn, bookkeyword, bookisbn, bookauthor, bookname;
 Storage<Transaction> transaction;
 
 void init() {
+#ifdef LOCAL
+    bool res = user.initialise("./rundata/accounts");
+    userid.initialize("./rundata/accounts.id");
+    if (!res) addAccount("root", "sjtu", ROOT, "");
+
+    book.initialise("./rundata/books");
+    bookkeyword.initialize("./rundata/books.keyword");
+    bookisbn.initialize("./rundata/books.isbn");
+    bookauthor.initialize("./rundata/books.author");
+    bookname.initialize("./rundata/books.name");
+
+    keyword.initialise("./rundata/keywords");
+    keywordisbn.initialize("./rundata/keyword.isbn");
+
+    transaction.initialise("./rundata/transaction", 1);
+#else
 
     bool res = user.initialise("accounts");
     userid.initialize("accounts.id");
@@ -72,6 +88,7 @@ void init() {
 
     transaction.initialise("transaction", 1);
 
+#endif
 }
 
 // Account
@@ -181,12 +198,12 @@ void addBook(const long long &quantity) {
 
 void modifyBook(const vector<string> &var) {
     stack.check(2);
+    multiVarCheck(var, bookisbn);
+    for (const auto &com : var)
+        multiKeywordCheck(com);
     int offset = stack.selected();
     Book now;
     book.read(now, offset);
-    multiVarCheck(var, bookisbn, "");
-    for (const auto &com : var)
-        multiKeywordCheck(com);
     for (const auto &com : var) {
         Option opt;
         string res;
