@@ -46,6 +46,10 @@ void getCommand(const string &command, Option &opt, string &var) {
         checkstring2(var, 60, '"');
     } else if (command[1] == 'p') {
         opt = PRICE;
+        if (command.size() <= 7) 
+            throw Exception("-price = NULL");
+        if (command.substr(0, 7) != "-price=") 
+            throw Exception("error");
         for (int i = 7; i < command.size(); ++i)
             var += command[i];
         checkdouble(var, 13);
