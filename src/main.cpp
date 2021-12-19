@@ -111,10 +111,11 @@ bool run(std::vector<string> command) {
                 throw Exception("report: invalid commands numbers");
             if (command[1] == "myself")
                 ;// TODO
-            if (command[1] == "finance")
+            else if (command[1] == "finance")
                 ;// TODO
-            if (command[1] == "emplyee")
+            else if (command[1] == "emplyee")
                 ;// TODO
+            else throw Exception(""); 
     } else throw Exception("Invalid command");
     return true;
 }
