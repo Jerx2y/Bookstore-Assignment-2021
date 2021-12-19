@@ -30,6 +30,6 @@ void checkdouble(const string&, int);
 
 void checkstring1(const string&, int);
 
-void checkstring2(const string&, int);
+void checkstring2(const string&, int, char = 0);
 
 #endif

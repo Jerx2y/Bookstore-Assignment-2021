@@ -21,7 +21,7 @@ void getCommand(const string &command, Option &opt, string &var) {
             throw Exception("error");
         for (int i = 7, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
-        checkstring2(var, 60);
+        checkstring2(var, 60, '"');
     } else if (command[1] == 'a') {
         if (command.size() <= 10)
             throw Exception("modify: -ISBN = NULL");
@@ -32,7 +32,7 @@ void getCommand(const string &command, Option &opt, string &var) {
             throw Exception("error");
         for (int i = 9, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
-        checkstring2(var, 60);
+        checkstring2(var, 60, '"');
     } else if (command[1] == 'k') {
         if (command.size() <= 11)
             throw Exception("modify: -ISBN = NULL");
@@ -43,7 +43,7 @@ void getCommand(const string &command, Option &opt, string &var) {
             throw Exception("error");
         for (int i = 10, sz = command.size(); i < sz - 1; ++i)
             var += command[i];
-        checkstring2(var, 60);
+        checkstring2(var, 60, '"');
     } else if (command[1] == 'p') {
         opt = PRICE;
         for (int i = 7; i < command.size(); ++i)
@@ -212,10 +212,10 @@ void checkstring1(const std::string &var, int len) {
             throw Exception("invalid char in string1");
 }
 
-void checkstring2(const std::string &var, int len) {
+void checkstring2(const std::string &var, int len, char ch) {
     if (var.size() > len)
         throw Exception("string2 too long");
     for (const auto &it : var)
-        if (iscntrl(it))
+        if (iscntrl(it) || it == ch)
             throw Exception("invalid char in string2");
 }
