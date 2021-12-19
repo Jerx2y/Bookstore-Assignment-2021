@@ -56,20 +56,22 @@ Ull keywordisbn, bookkeyword, bookisbn, bookauthor, bookname;
 Storage<Transaction> transaction;
 
 void init() {
-    bool res = user.initialise("./rundata/accounts");
-    userid.initialize("./rundata/accounts.id");
+
+    bool res = user.initialise("accounts");
+    userid.initialize("accounts.id");
     if (!res) addAccount("root", "sjtu", ROOT, "");
 
-    book.initialise("./rundata/books");
-    bookkeyword.initialize("./rundata/books.keyword");
-    bookisbn.initialize("./rundata/books.isbn");
-    bookauthor.initialize("./rundata/books.author");
-    bookname.initialize("./rundata/books.name");
+    book.initialise("books");
+    bookkeyword.initialize("books.keyword");
+    bookisbn.initialize("books.isbn");
+    bookauthor.initialize("books.author");
+    bookname.initialize("books.name");
 
-    keyword.initialise("./rundata/keywords");
-    keywordisbn.initialize("./rundata/keyword.isbn");
+    keyword.initialise("keywords");
+    keywordisbn.initialize("keyword.isbn");
 
-    transaction.initialise("./rundata/transaction", 1);
+    transaction.initialise("transaction", 1);
+
 }
 
 // Account
