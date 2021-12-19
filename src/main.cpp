@@ -129,10 +129,10 @@ int main() {
     while (getline(cin, command)) {
         if (command.empty()) continue;
         try {
-//            if (command[0] == ' ')
-//                throw Exception("");
             getCommand(command, commands);
             if (commands.empty()) continue;
+            if (command[0] == ' ' || command.back() == ' ')
+                throw Exception("");
             if (!run(commands))
                 break;
         } catch (Exception ex) {
