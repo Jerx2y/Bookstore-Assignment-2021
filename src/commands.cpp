@@ -56,23 +56,6 @@ Ull keywordisbn, bookkeyword, bookisbn, bookauthor, bookname;
 Storage<Transaction> transaction;
 
 void init() {
-#ifdef LOCAL
-    bool res = user.initialise("./rundata/accounts");
-    userid.initialize("./rundata/accounts.id");
-    if (!res) addAccount("root", "sjtu", ROOT, "");
-
-    book.initialise("./rundata/books");
-    bookkeyword.initialize("./rundata/books.keyword");
-    bookisbn.initialize("./rundata/books.isbn");
-    bookauthor.initialize("./rundata/books.author");
-    bookname.initialize("./rundata/books.name");
-
-    keyword.initialise("./rundata/keywords");
-    keywordisbn.initialize("./rundata/keyword.isbn");
-
-    transaction.initialise("./rundata/transaction", 1);
-#else
-
     bool res = user.initialise("accounts");
     userid.initialize("accounts.id");
     if (!res) addAccount("root", "sjtu", ROOT, "");
@@ -87,8 +70,6 @@ void init() {
     keywordisbn.initialize("keyword.isbn");
 
     transaction.initialise("transaction", 1);
-
-#endif
 }
 
 // Account
@@ -187,7 +168,7 @@ void userAdd(const string &id, const string &password, Privilege priority, const
 
 // Book
 
-void addBook(const long long &quantity) {
+void addBook(const int &quantity) {
     stack.check(2);
     int offset = stack.selected();
     Book now;
@@ -215,14 +196,24 @@ void modifyBook(const vector<string> &var) {
             keywordisbn.query(now.isbn, kres);
             int cnt = 0;
             for (int tnow : kres) {
-                Varchar<2> order(inttostring(++cnt));
-                keywordisbn.erase(now.isbn, order, tnow);
+                ++cnt;
+                string t;
+                t.resize(2);
+                t[0] = cnt / 10 + '0';
+                t[1] = cnt % 10 + '0';
+                Varchar<2> odr(t);
+                keywordisbn.erase(now.isbn, odr, tnow);
             }
             now.isbn = res;
             cnt = 0;
             for (int tnow : kres) {
-                Varchar<2> order(inttostring(++cnt));
-                keywordisbn.insert(now.isbn, order, tnow);
+                ++cnt;
+                string t;
+                t.resize(2);
+                t[0] = cnt / 10 + '0';
+                t[1] = cnt % 10 + '0';
+                Varchar<2> odr(t);
+                keywordisbn.insert(now.isbn, odr, tnow);
             }
             bookisbn.insert(now.isbn, now.isbn, offset);
             book.update(now, offset);
@@ -246,11 +237,16 @@ void modifyBook(const vector<string> &var) {
             vector<int> vec;
             keywordisbn.query(now.isbn, vec);
             for (auto k : vec) {
-                Varchar<2> order(inttostring(++cnt));
+                ++cnt;
+                string t;
+                t.resize(2);
+                t[0] = cnt / 10 + '0';
+                t[1] = cnt % 10 + '0';
+                Varchar<2> odr(t);
                 Varchar<60> kwd;
                 keyword.read(kwd, k);
                 bookkeyword.erase(kwd, now.isbn, offset);
-                keywordisbn.erase(now.isbn, order, k);
+                keywordisbn.erase(now.isbn, odr, k);
             }
 
             res += '|';
@@ -258,11 +254,16 @@ void modifyBook(const vector<string> &var) {
             string tmp;
             for (int i = 0, sz = res.size(); i < sz; ++i) {
                 if (res[i] == '|') {
+                    ++cnt;
                     Varchar<60> keyw(tmp);
-                    Varchar<2> order(inttostring(++cnt));
                     int offsetk = keyword.write(keyw);
+                    tmp.clear();
+                    tmp.resize(2);
+                    tmp[0] = cnt / 10 + '0';
+                    tmp[1] = cnt % 10 + '0';
+                    Varchar<2> odr(tmp);
                     bookkeyword.insert(keyw, now.isbn, offset);
-                    keywordisbn.insert(now.isbn, order, offsetk);
+                    keywordisbn.insert(now.isbn, odr, offsetk);
                     tmp.clear();
                 } else tmp += res[i];
             }
@@ -273,7 +274,7 @@ void modifyBook(const vector<string> &var) {
     }
 }
 
-void buyBook(const string &isbn, const long long &quantity) {
+void buyBook(const string &isbn, const int &quantity) {
     stack.check(0);
     Varchar<20> nowisbn(isbn);
     vector<int> offset;
