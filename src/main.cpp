@@ -129,8 +129,6 @@ int main() {
     while (getline(cin, command)) {
         if (command.empty()) continue;
         try {
-            if (command[0] == ' ')
-                throw Exception("");
             getCommand(command, commands);
             if (commands.empty()) continue;
             if (!run(commands))
