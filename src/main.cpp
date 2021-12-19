@@ -122,6 +122,7 @@ bool run(std::vector<string> command) {
 
 int main() {
 
+www
     ;
 
     init();
