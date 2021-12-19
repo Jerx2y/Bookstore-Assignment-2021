@@ -73,15 +73,15 @@ bool run(std::vector<string> command) {
             showBook(command[1]);
         } else if (command.size() == 2) showFinance();
         else if (command.size() == 3) {
-            checkint(command[2], 9);
-            showFinance(std::stoi(command[2]));
+            checkint(command[2], 10);
+            showFinance(toint(command[2], 2147483647));
         }
     } else if (command[0] == "buy") {
         if (command.size() != 3)
             throw Exception("buy: invalid commands numbers");
         checkstring2(command[1], 20);
         checkint(command[2], 10);
-        buyBook(command[1], std::stoi(command[2]));
+        buyBook(command[1], toint(command[2], 2147483647));
     } else if (command[0] == "select") {
         if (command.size() != 2)
             throw Exception("select: invalid commands numbers");
@@ -100,7 +100,7 @@ bool run(std::vector<string> command) {
             throw Exception("import: invalid commands numbers");
         checkint(command[1], 10);
         checkdouble(command[2], 13);
-        addBook(std::stoi(command[1]));
+        addBook(toint(command[1], 2147483647));
         takeFinance(-std::stod(command[2]));
     } else if (command[0] == "log") {
         if (command.size() != 1)
