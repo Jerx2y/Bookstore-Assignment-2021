@@ -32,4 +32,6 @@ void checkstring1(const string&, int);
 
 void checkstring2(const string&, int, char = 0);
 
+string inttostring(int);
+
 #endif

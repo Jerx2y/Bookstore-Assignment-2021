@@ -62,7 +62,7 @@ bool getCommand(std::string &line, std::vector<string> &command) {
         throw Exception("command: too long");
     for (int i = 0, sz = line.size(); i < sz; ++i)
         if (!isascii(line[i]))
-            throw Exception("command: isn't ASCII");
+            throw Exception("command: not ASCII");
     string tmp;
     tmp.clear();
     command.clear();
@@ -218,4 +218,12 @@ void checkstring2(const std::string &var, int len, char ch) {
     for (const auto &it : var)
         if (iscntrl(it) || it == ch)
             throw Exception("invalid char in string2");
+}
+
+std::string inttostring(int cnt) {
+    std::string t;
+    t.resize(2);
+    t[0] = cnt / 10 + '0';
+    t[1] = cnt % 10 + '0';
+    return t;
 }
