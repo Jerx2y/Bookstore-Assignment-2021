@@ -227,3 +227,10 @@ std::string inttostring(int cnt) {
     t[1] = cnt % 10 + '0';
     return t;
 }
+
+long long toint(const string &s, int MAXRANGE) {
+    long long tmp = std::stoll(s);
+    if (tmp > MAXRANGE)
+        throw Exception("int exceed");
+    return tmp;
+}

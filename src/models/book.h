@@ -14,7 +14,7 @@ class Book {
   Varchar<20> isbn;
   Varchar<60> name;
   Varchar<60> author;
-  int stock;
+  long long stock;
   double price;
   Book();
 };

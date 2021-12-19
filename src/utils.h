@@ -34,4 +34,6 @@ void checkstring2(const string&, int, char = 0);
 
 string inttostring(int);
 
+long long toint(const string&, int);
+
 #endif

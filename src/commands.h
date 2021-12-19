@@ -54,9 +54,9 @@ void changePassword(const string &, const string &);
 void changePassword(const string &, const string &, const string&);
 void userAdd(const string&, const string&, Privilege, const string&);
 
-void addBook(const int &);
+void addBook(const long long &);
 void modifyBook(const vector<string>&);
-void buyBook(const string &, const int &);
+void buyBook(const string &, const long long &);
 void printBook(Book &);
 void showBook();
 void showBook(const string &);
