@@ -201,7 +201,7 @@ void modifyBook(const vector<string> &var) {
     int offset = stack.selected();
     Book now;
     book.read(now, offset);
-    multiVarCheck(var, bookisbn, now.isbn.str());
+    multiVarCheck(var, bookisbn, "");
     for (const auto &com : var)
         multiKeywordCheck(com);
     for (const auto &com : var) {
