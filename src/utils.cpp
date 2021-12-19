@@ -81,7 +81,7 @@ bool getCommand(std::string &line, std::vector<string> &command) {
     return 1;
 }
 
-void multiVarCheck(const std::vector<string>& var, Ull &book) {
+void multiVarCheck(const std::vector<string>& var, Ull &book, const string &nowisbn) {
     bool visisbn(0), visname(0), visauthor(0), viskeyword(0), visprice(0);
     for (auto command : var) {
         if (command[1] == 'I') {
@@ -96,6 +96,8 @@ void multiVarCheck(const std::vector<string>& var, Ull &book) {
             for (int i = 6, sz = command.size(); i < sz; ++i)
                 var += command[i]; 
             checkstring2(var, 20);
+            if (var == nowisbn)
+                continue;
             std::vector<int> res;
             Varchar<20> isbn(var);
             book.query(isbn, res);
