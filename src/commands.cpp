@@ -189,6 +189,8 @@ void userAdd(const string &id, const string &password, Privilege priority, const
 
 void addBook(const long long &quantity) {
     stack.check(2);
+    if (!quantity) 
+        throw Exception("");
     int offset = stack.selected();
     Book now;
     book.read(now, offset);
