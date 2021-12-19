@@ -115,7 +115,7 @@ bool run(std::vector<string> command) {
                 ;// TODO
             else if (command[1] == "emplyee")
                 ;// TODO
-            else throw Exception(""); 
+            else throw Exception("");
     } else throw Exception("Invalid command");
     return true;
 }
