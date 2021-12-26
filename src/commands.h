@@ -1,10 +1,10 @@
 #ifndef BOOKSTORE_ASSIGNMENT_COMMANDS_H_
 #define BOOKSTORE_ASSIGNMENT_COMMANDS_H_
 
-#include <stack>
-#include <unordered_map>
-#include <string>
 #include <cassert>
+#include <stack>
+#include <string>
+#include <unordered_map>
 
 #include "../../lib/varchar.h"
 #include "../storage.h"
@@ -18,19 +18,20 @@ using std::string;
 
 // 保存登录栈的元素
 struct Atom {
-    Account account;
-    int book; // the offset of book
-    Atom(const Account &, const int &);
+  Account account;
+  int book;  // the offset of book
+  Atom(const Account &, const int &);
 };
 
 // 登录栈
-class AccountStack{
+class AccountStack {
  private:
   std::stack<Atom> online;
   std::unordered_map<string, int> instack;
+
  public:
   AccountStack() = default;
-  void push(const Account&);
+  void push(const Account &);
   void pop();
   void check(int);
   bool empty();
@@ -44,19 +45,19 @@ class AccountStack{
 // Before run
 void init();
 
-void addAccount(const string&, const string&, Privilege, const string&);
-void getAccount(const string&, Account &, int &);
-void deleteAccount(const string&);
+void addAccount(const string &, const string &, Privilege, const string &);
+void getAccount(const string &, Account &, int &);
+void deleteAccount(const string &);
 void login(const string &);
 void login(const string &, const string &);
 void logout();
-void Register(const string&, const string&, const string&);
+void Register(const string &, const string &, const string &);
 void changePassword(const string &, const string &);
-void changePassword(const string &, const string &, const string&);
-void userAdd(const string&, const string&, Privilege, const string&);
+void changePassword(const string &, const string &, const string &);
+void userAdd(const string &, const string &, Privilege, const string &);
 
 void addBook(const long long &);
-void modifyBook(const vector<string>&);
+void modifyBook(const vector<string> &);
 double buyBook(const string &, const long long &);
 void printBook(Book &);
 void showBook();
@@ -71,6 +72,6 @@ void reportFinance();
 void reportEmployee();
 void reportLog();
 
-bool run(std::vector<string>, std::string&, int &, double &);
+bool run(std::vector<string>, std::string &, int &, double &);
 
 #endif

@@ -2,6 +2,7 @@
 #define BOOKSOTRE_ASSIGNMENT_BOOK_H_
 
 #include <string>
+
 #include "../../lib/varchar.h"
 #include "../storage.h"
 #include "../ull.h"

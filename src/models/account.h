@@ -2,8 +2,9 @@
 #define BOOKSTORE_ASSIGNMENT_ACCOUNT_H_
 
 #include <stack>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
+
 #include "../../lib/varchar.h"
 #include "../storage.h"
 #include "../ull.h"
@@ -11,11 +12,7 @@
 
 using std::string;
 
-enum Privilege {
-  CUSTOMER = 1,
-  WORKER = 3,
-  ROOT = 7
-};
+enum Privilege { CUSTOMER = 1, WORKER = 3, ROOT = 7 };
 
 class Account {
  public:
