@@ -78,7 +78,7 @@ void multiVarCheck(const std::vector<string> &var, Ull &book,
       string var;
       for (int i = 6, sz = command.size(); i < sz; ++i) var += command[i];
       checkstring2(var, 20);
-      if (var == nowisbn) continue;
+      // if (var == nowisbn) continue;
       std::vector<int> res;
       Varchar<20> isbn(var);
       book.query(isbn, res);
