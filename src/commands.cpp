@@ -10,14 +10,14 @@ void AccountStack::push(const Account &u) {
 }
 
 void AccountStack::pop() {
-    if (online.empty()) throw Exception("No User Online");
+    if (online.empty()) throw Exception("No user online");
     instack[online.top().account.userId.str()]--;
     online.pop();
 }
 
 void AccountStack::check(int p) {
     if (online.empty() || online.top().account.privilege <= p)
-        throw Exception("Has Not Priority");
+        throw Exception("You have not enough priority");
 }
 
 bool AccountStack::empty() {
@@ -42,6 +42,11 @@ int AccountStack::selected() {
 
 void AccountStack::select(const int &offset) {
     online.top().book = offset;
+}
+
+void AccountStack::getTop(std::string &id) {
+    if (online.empty()) id = "<anon>";
+    else id = online.top().account.userId;
 }
 
 AccountStack stack;
@@ -110,14 +115,6 @@ void getAccount(const string &id, Account &now, int &offset) {
     userid.query(user_id, res);
     if (res.empty()) throw Exception("Find Nothing");
     assert(res.size() == 1);
-//    if (res.size() != 1) {
-//        std::cout << res.size() << std::endl;
-//        for (auto it : res) {
-//            user.read(now, it);
-//            std::cout << now.userId.str() << " " << now.name.str() << " " << now.password.str() << " # " << std::endl;
-//        }
-//        assert(0);
-//    }
     user.read(now, res[0]);
     offset = res[0];
 }
@@ -145,7 +142,7 @@ void login(const string &id, const string &password) {
     int offset;
     getAccount(id, now, offset);
     if (now.password.str() != password)
-        throw Exception("su: Password Wrong to login: " + now.password.str() + " instead of " + password);
+        throw Exception("su: Wrong password to login");
     stack.push(now);
 }
 
@@ -273,7 +270,7 @@ void modifyBook(const vector<string> &var) {
     }
 }
 
-void buyBook(const string &isbn, const long long &quantity) {
+double buyBook(const string &isbn, const long long &quantity) {
     stack.check(0);
     Varchar<20> nowisbn(isbn);
     vector<int> offset;
@@ -290,6 +287,7 @@ void buyBook(const string &isbn, const long long &quantity) {
         std::setprecision(2) << quantity * now.price << std::endl;
     now.stock -= quantity;
     book.update(now, offset[0]);
+    return quantity * now.price;
 }
 
 void printBook(Book &now) {
@@ -402,4 +400,172 @@ void takeFinance(double var) {
     transaction.write_info(total, 1);
     Transaction now(var);
     transaction.write(now);
+}
+
+void showLog(const string &id, bool showall = 0) {
+    fstream logfile("./rundata/log", std::ios::in);
+    string tmp;
+    while (getline(logfile, tmp)) {
+        if (showall) {
+            std::cout << tmp << std::endl;
+            continue;
+        }
+        string nowuser;
+        for (int i = 0, sz = tmp.size(); i < sz && tmp[i] != ' '; ++ i)
+            nowuser += tmp[i];
+        if (nowuser[nowuser.size() - 2] != '3' && nowuser[nowuser.size() - 2] != '7') continue;
+        if (id.empty() || nowuser.substr(0, nowuser.size() - 3) == id)
+            std::cout << tmp << std::endl;
+    }
+}
+
+void reportMyself() {
+    stack.check(2);
+    std::string id;
+    stack.getTop(id);
+    std::cout << "------------YOURSELF-------------\n";
+    showLog(id);
+    std::cout << "---------------END---------------\n";
+}
+
+void reportEmployee() {
+    stack.check(4);
+    std::cout << "------------EMPLOYEE-------------\n";
+    showLog("");
+    std::cout << "---------------END---------------\n";
+}
+
+void reportFinance() {
+    stack.check(4);
+    fstream logfile("./rundata/log", std::ios::in);
+    string tmp;
+    std::cout << "---------FINANCE---------\n";
+    while (getline(logfile, tmp)) {
+        std::vector<string> cmd;
+        getCommand(tmp, cmd);
+        if (cmd[3] == "buy")
+            std::cout << cmd[0].substr(0, cmd[0].size() - 3) << "\tbuy\t" << cmd[6] << std::endl;
+        if (cmd[3] == "import")
+            std::cout << cmd[0].substr(0, cmd[0].size() - 3) << "\timport\t" << cmd[5] << std::endl;
+    }
+    std::cout << "-----------END-----------\n";
+}
+
+void reportLog() {
+    stack.check(4);
+    std::cout << "---------------LOG---------------\n";
+    showLog("", 1);
+    std::cout << "---------------END---------------\n";
+}
+
+bool run(std::vector<string> command, std::string &userid, int &pri, double &buy) {
+    stack.getTop(userid);
+    if (stack.empty()) pri = 0;
+    else pri = stack.getPriority();
+    if (command[0] == "exit" || command[0] == "quit") {
+        if (command.size() > 1)
+            throw Exception("quit: invalid commands numbers");
+        return false;
+    } else if (command[0] == "su") {
+        if (command.size() == 1 || command.size() > 3)
+            throw Exception("su: invalid commands numbers");
+        checkstring1(command[1], 30);
+        if (command.size() == 2) login(command[1]);
+        else {
+            checkstring2(command[2], 30);
+            login(command[1], command[2]);
+        }
+    } else if (command[0] == "logout") {
+        if (command.size() > 1)
+            throw Exception("logout: invalid commands numbers");
+        logout();
+    } else if (command[0] == "register") {
+        if (command.size() != 4)
+            throw Exception("register: invalid commands numbers");
+        checkstring1(command[1], 30);
+        checkstring1(command[2], 30);
+        checkstring2(command[3], 30);
+        Register(command[1], command[2], command[3]);
+    } else if (command[0] == "passwd") {
+        if (command.size() != 4 && command.size() != 3)
+            throw Exception("passwd: invalid commands numbers");
+        checkstring1(command[1], 30);
+        checkstring1(command[2], 30);
+        if (command.size() == 3)
+            changePassword(command[1], command[2]);
+        else {
+            checkstring1(command[3], 30);
+            changePassword(command[1], command[2], command[3]);
+        }
+    } else if (command[0] == "useradd") {
+        if (command.size() != 5)
+            throw Exception("useradd: invalid commands numbers");
+        Privilege priority;
+        if (command[3] == "1") priority = CUSTOMER;
+        else if (command[3] == "3") priority = WORKER;
+        else if (command[3] == "7") priority = ROOT;
+        else throw Exception("useradd: user's priority invalid");
+        checkstring1(command[1], 30);
+        checkstring1(command[2], 30);
+        checkstring2(command[4], 30);
+        userAdd(command[1], command[2], priority, command[4]);
+    } else if (command[0] == "delete") {
+        if (command.size() != 2)
+            throw Exception("delete: invalid commands numbers");
+        checkstring1(command[1], 30);
+        deleteAccount(command[1]);
+    } else if (command[0] == "show") { // show book or show finance
+        if (command.size() > 3)
+            throw Exception("show: invalid commands numbers");
+        if (command.size() == 1) showBook();
+        else if (command[1] != "finance") {
+            if (command.size() != 2)
+                throw Exception("show -: invalid commands numbers");
+            showBook(command[1]);
+        } else if (command.size() == 2) showFinance();
+        else if (command.size() == 3) {
+            checkint(command[2], 10);
+            showFinance(toint(command[2], 2147483647));
+        }
+    } else if (command[0] == "buy") {
+        if (command.size() != 3)
+            throw Exception("buy: invalid commands numbers");
+        checkstring2(command[1], 20);
+        checkint(command[2], 10);
+        buy = buyBook(command[1], toint(command[2], 2147483647));
+    } else if (command[0] == "select") {
+        if (command.size() != 2)
+            throw Exception("select: invalid commands numbers");
+        checkstring2(command[1], 20);
+        selectBook(command[1]);
+    } else if (command[0] == "modify") {
+        std::vector<string> modi;
+        for (int i = 1; i < command.size(); ++i)
+            modi.push_back(command[i]);
+        if (modi.empty())
+            throw Exception("modify: Modify Empty");
+        modifyBook(modi);
+    } else if (command[0] == "import") {
+        if (command.size() != 3)
+            throw Exception("import: invalid commands numbers");
+        checkint(command[1], 10);
+        checkdouble(command[2], 13);
+        addBook(toint(command[1], 2147483647));
+        takeFinance(-std::stod(command[2]));
+    } else if (command[0] == "log") {
+        if (command.size() != 1)
+            throw Exception("log: invalid commands numbers");
+        reportLog();
+    } else if (command[0] == "report") {
+            if (command.size() != 2)
+                throw Exception("report: invalid commands numbers");
+            if (command[1] == "myself")
+                reportMyself();
+            else if (command[1] == "finance")
+                reportFinance();
+            else if (command[1] == "employee")
+                reportEmployee();
+            else throw Exception("");
+    } else throw Exception("Invalid command");
+    return true;
 }

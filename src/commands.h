@@ -38,6 +38,7 @@ class AccountStack{
   bool loggedin(const string &);
   int selected();
   void select(const int &);
+  void getTop(std::string &);
 };
 
 // Before run
@@ -56,7 +57,7 @@ void userAdd(const string&, const string&, Privilege, const string&);
 
 void addBook(const long long &);
 void modifyBook(const vector<string>&);
-void buyBook(const string &, const long long &);
+double buyBook(const string &, const long long &);
 void printBook(Book &);
 void showBook();
 void showBook(const string &);
@@ -65,6 +66,11 @@ void selectBook(const string &);
 void showFinance(int t = -1);
 void takeFinance(double);
 
-void done();
+void reportMyself();
+void reportFinance();
+void reportEmployee();
+void reportLog();
+
+bool run(std::vector<string>, std::string&, int &, double &);
 
 #endif

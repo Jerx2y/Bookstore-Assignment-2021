@@ -76,8 +76,8 @@ public:
         file.close();
     }
 
-    //删除位置索引index对应的对象(不涉及空间回收时，可忽略此函数)，保证调用的index都是由write函数产生
     void Delete(int index) {
+        ;
     }
 };
 
