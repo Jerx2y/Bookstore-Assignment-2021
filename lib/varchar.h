@@ -11,8 +11,10 @@ template <int maxLength>
 class Varchar {
   template <int A>
   friend class Varchar;
+
  private:
-  char content[maxLength + 1];
+  char content_[maxLength + 1];
+
  public:
   Varchar();
   Varchar(const std::string &s);
@@ -39,15 +41,15 @@ class Varchar {
 
 template <int maxLength>
 Varchar<maxLength>::Varchar() {
-  memset(content, 0, sizeof content);
+  memset(content_, 0, sizeof content_);
 }
 
 template <int maxLength>
 Varchar<maxLength>::Varchar(const std::string &str) {
   auto size = str.size();
   if (size > maxLength) throw(Exception("The String Is Too Long"));
-  for (int i = 0; i < size; ++i) content[i] = str[i];
-  content[size] = 0;
+  for (int i = 0; i < size; ++i) content_[i] = str[i];
+  content_[size] = 0;
 }
 
 template <int maxLength>
@@ -55,14 +57,14 @@ Varchar<maxLength>::Varchar(const char *cstr) {
   int size = 0;
   while (cstr[size]) ++size;
   if (size > maxLength) throw(Exception("The char* Is Too Long"));
-  for (int i = 0; i < size; ++i) content[i] = cstr[i];
-  content[size] = 0;
+  for (int i = 0; i < size; ++i) content_[i] = cstr[i];
+  content_[size] = 0;
 }
 
 template <int maxLength>
 std::string Varchar<maxLength>::str() const {
   std::string res;
-  const char *p = content;
+  const char *p = content_;
   while (*p) res += *(p++);
   return res;
 }
@@ -76,10 +78,10 @@ template <int maxLength>
 template <int A>
 Varchar<maxLength> &Varchar<maxLength>::operator=(const Varchar<A> &that) {
   int sz = 0;
-  while (that.content[sz]) ++sz;
+  while (that.content_[sz]) ++sz;
   if (sz > maxLength) throw(Exception("That Is Too Long"));
-  for (int i = 0; i < sz; ++i) content[i] = that.content[i];
-  content[sz] = 0;
+  for (int i = 0; i < sz; ++i) content_[i] = that.content_[i];
+  content_[sz] = 0;
   return *this;
 }
 
@@ -87,15 +89,15 @@ template <int maxLength>
 Varchar<maxLength> &Varchar<maxLength>::operator=(const std::string &str) {
   auto size = str.size();
   if (size > maxLength) throw(Exception("The String Is Too Long"));
-  for (int i = 0; i < size; ++i) content[i] = str[i];
-  content[size] = 0;
+  for (int i = 0; i < size; ++i) content_[i] = str[i];
+  content_[size] = 0;
   return *this;
 }
 
 template <int maxLength>
 template <int A>
 bool Varchar<maxLength>::operator<(const Varchar<A> &that) const {
-  const char *pthis = content, *pthat = that.content;
+  const char *pthis = content_, *pthat = that.content_;
   while (*pthis && *pthat && *pthis == *pthat) ++pthis, ++pthat;
   return *pthis < *pthat;
 }
@@ -132,7 +134,7 @@ bool Varchar<maxLength>::operator!=(const Varchar<A> &that) const {
 
 template <int maxLength>
 bool Varchar<maxLength>::empty() {
-  return content[0] == 0;
+  return content_[0] == 0;
 }
 
 #endif

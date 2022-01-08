@@ -1,3 +1,3 @@
 #include "book.h"
 
-Book::Book() { stock = price = 0, name = author = Varchar<2>(); }
+Book::Book() { stock_ = price_ = 0, name_ = author_ = Varchar<2>(); }

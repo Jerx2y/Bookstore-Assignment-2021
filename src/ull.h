@@ -19,7 +19,7 @@ const int ksLimit = 2000;
 class Node {
  public:
   int offset_;
-  Varchar<60> first, second;
+  Varchar<60> first_, second_;
   Node();
   template <int A, int B>
   Node(const Varchar<A> &, const Varchar<B> &, int);
@@ -30,7 +30,7 @@ class Node {
 class Block {
  public:
   Node array_[kSize];
-  int size;
+  int size_;
   Block();
   bool empty() const;
   Node maxvar();
@@ -42,9 +42,9 @@ class Block {
 
 class BlockIndex {
  public:
-  int size;
-  int offset[kSize];
-  Node maxvar[kSize];
+  int size_;
+  int offset_[kSize];
+  Node maxvar_[kSize];
   BlockIndex();
   bool inrange(const int &);
   int &getoffset(const int &);
@@ -74,20 +74,20 @@ class Ull {
 
 template <int A, int B>
 Node::Node(const Varchar<A> &fir, const Varchar<B> &sec, int val) {
-  first = fir, second = sec, offset_ = val;
+  first_ = fir, second_ = sec, offset_ = val;
 }
 
 template <int A>
 void BlockIndex::query(const Varchar<A> &var, int &lpos, int &rpos) {
-  lpos = 0, rpos = size - 1;
-  for (int i = size; i; --i) {
-    if (maxvar[i - 1].first < var) {
+  lpos = 0, rpos = size_ - 1;
+  for (int i = size_; i; --i) {
+    if (maxvar_[i - 1].first_ < var) {
       lpos = i;
       break;
     }
   }
-  for (int i = 0; i < size; ++i) {
-    if (var < maxvar[i - 1].first) {
+  for (int i = 0; i < size_; ++i) {
+    if (var < maxvar_[i - 1].first_) {
       rpos = i;
       break;
     }
@@ -108,8 +108,8 @@ void Ull::insert(const Varchar<A> &fir, const Varchar<B> &scd, const int &val) {
     ipos = 0, index.getoffset(ipos) = block_.write(curblock);
   Block extend = curblock.add(var);
   if (!extend.empty()) {
-    int offset = block_.write(extend);
-    index.extend(curblock.maxvar(), extend.maxvar(), offset, ipos + 1);
+    int offset_ = block_.write(extend);
+    index.extend(curblock.maxvar(), extend.maxvar(), offset_, ipos + 1);
   }
   block_.update(curblock, index.getoffset(ipos));
   blockindex_.update(index, 0);
@@ -128,7 +128,7 @@ void Ull::erase(const Varchar<A> &fir, const Varchar<B> &scd, const int &val) {
   if (index.inrange(ipos + 1)) {
     Block nxtblock;
     block_.read(nxtblock, index.getoffset(ipos + 1));
-    if (curblock.size + nxtblock.size < ksLimit) {
+    if (curblock.size_ + nxtblock.size_ < ksLimit) {
       block_.Delete(index.getoffset(ipos + 1));
       curblock.merge(nxtblock);
       index.shrink(curblock.maxvar(), ipos + 1);
@@ -149,8 +149,8 @@ void Ull::query(const Varchar<A> &var, vector<int> &res) {
   for (int i = lpos; i <= rpos; ++i) {
     Block curblock;
     block_.read(curblock, index.getoffset(i));
-    for (int j = 0; j < curblock.size; ++j) {
-      if (var == curblock.array_[j].first)
+    for (int j = 0; j < curblock.size_; ++j) {
+      if (var == curblock.array_[j].first_)
         res.push_back(curblock.array_[j].offset_);
     }
   }

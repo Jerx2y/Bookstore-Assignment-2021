@@ -12,11 +12,11 @@ using std::string;
 
 class Book {
  public:
-  Varchar<20> isbn;
-  Varchar<60> name;
-  Varchar<60> author;
-  long long stock;
-  double price;
+  Varchar<20> isbn_;
+  Varchar<60> name_;
+  Varchar<60> author_;
+  long long stock_;
+  double price_;
   Book();
 };
 

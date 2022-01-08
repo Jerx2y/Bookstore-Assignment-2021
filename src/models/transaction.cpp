@@ -1,10 +1,10 @@
 #include "transaction.h"
 
-Transaction::Transaction() { opt = var = 0; }
+Transaction::Transaction() { opt_ = var_ = 0; }
 
-Transaction::Transaction(double var_) {
+Transaction::Transaction(double var) {
   if (var_ < 0)
-    opt = -1, var = -var_;
+    opt_ = -1, var_ = -var;
   else
-    opt = 1, var = var_;
+    opt_ = 1, var_ = var;
 }

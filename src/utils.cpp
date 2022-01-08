@@ -158,14 +158,15 @@ void checkint(const std::string &var, int len) {
 
 void checkdouble(const std::string &var, int len) {
   if (var.size() > len) throw Exception("double too long");
-  double visdot = 0;
+  bool visdot = 0;
   for (const auto &it : var)
     if (!isdigit(it))
       if (it == '.') {
         if (visdot) throw Exception("2 more . in double");
         visdot = 1;
-      } else
+      } else {
         throw Exception("invalid char in double");
+      }
 }
 
 void checkstring1(const std::string &var, int len) {

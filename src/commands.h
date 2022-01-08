@@ -6,9 +6,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "../../lib/varchar.h"
-#include "../storage.h"
-#include "../ull.h"
+#include "../lib/varchar.h"
+#include "storage.h"
+#include "ull.h"
 #include "models/account.h"
 #include "models/book.h"
 #include "models/transaction.h"

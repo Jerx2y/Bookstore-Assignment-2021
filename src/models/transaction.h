@@ -2,8 +2,8 @@
 #define BOOKSTORE_ASSIGNMENT_TRANSACTION_H_
 
 struct Transaction {
-  int opt;
-  double var;
+  int opt_;
+  double var_;
   Transaction();
   Transaction(double);
 };

@@ -7,24 +7,24 @@ Atom::Atom(const Account &account_, const int &book_)
     : account(account_), book(book_) {}
 
 void AccountStack::push(const Account &u) {
-  instack[u.userId.str()]++;
+  instack[u.userId_.str()]++;
   online.push(Atom(u, -1));
 }
 
 void AccountStack::pop() {
   if (online.empty()) throw Exception("No user online");
-  instack[online.top().account.userId.str()]--;
+  instack[online.top().account.userId_.str()]--;
   online.pop();
 }
 
 void AccountStack::check(int p) {
-  if (online.empty() || online.top().account.privilege <= p)
+  if (online.empty() || online.top().account.privilege_ <= p)
     throw Exception("You have not enough priority");
 }
 
 bool AccountStack::empty() { return online.empty(); }
 
-Privilege AccountStack::getPriority() { return online.top().account.privilege; }
+Privilege AccountStack::getPriority() { return online.top().account.privilege_; }
 
 bool AccountStack::loggedin(const string &u) { return instack[u]; }
 
@@ -40,7 +40,7 @@ void AccountStack::getTop(std::string &id) {
   if (online.empty())
     id = "<anon>";
   else
-    id = online.top().account.userId;
+    id = online.top().account.userId_;
 }
 
 AccountStack stack;
@@ -100,7 +100,7 @@ void addAccount(const string &id, const string &password, Privilege priority,
   if (res.size()) throw Exception("Userid already exist");
   Account now(id, password, name, priority);
   int offset = user.write(now);
-  userid.insert(now.userId, now.userId, offset);
+  userid.insert(now.userId_, now.userId_, offset);
 }
 
 void getAccount(const string &id, Account &now, int &offset) {
@@ -120,14 +120,14 @@ void deleteAccount(const string &id) {
   getAccount(id, now, offset);
   if (stack.loggedin(id))
     throw Exception("Can not delete account that has logged in");
-  userid.erase(now.userId, now.userId, offset);
+  userid.erase(now.userId_, now.userId_, offset);
 }
 
 void login(const string &id) {
   Account now;
   int offset;
   getAccount(id, now, offset);
-  stack.check(now.privilege);
+  stack.check(now.privilege_);
   stack.push(now);
 }
 
@@ -135,7 +135,7 @@ void login(const string &id, const string &password) {
   Account now;
   int offset;
   getAccount(id, now, offset);
-  if (now.password.str() != password)
+  if (now.password_.str() != password)
     throw Exception("su: Wrong password to login");
   stack.push(now);
 }
@@ -154,7 +154,7 @@ void changePassword(const string &id, const string &newpassword) {
   Account now;
   int offset;
   getAccount(id, now, offset);
-  now.password = newpassword;
+  now.password_ = newpassword;
   user.update(now, offset);
 }
 
@@ -164,9 +164,9 @@ void changePassword(const string &id, const string &oldpassword,
   Account now;
   int offset;
   getAccount(id, now, offset);
-  if (now.password.str() != oldpassword)
+  if (now.password_.str() != oldpassword)
     throw Exception("passwd: wrong password to change password");
-  now.password = newpassword;
+  now.password_ = newpassword;
   user.update(now, offset);
 }
 
@@ -185,7 +185,7 @@ void addBook(const long long &quantity) {
   int offset = stack.selected();
   Book now;
   book.read(now, offset);
-  now.stock += quantity;
+  now.stock_ += quantity;
   book.update(now, offset);
 }
 
@@ -194,7 +194,7 @@ void modifyBook(const vector<string> &var) {
   int offset = stack.selected();
   Book now;
   book.read(now, offset);
-  multiVarCheck(var, bookisbn, now.isbn.str());
+  multiVarCheck(var, bookisbn, now.isbn_.str());
   for (const auto &com : var) multiKeywordCheck(com);
   for (const auto &com : var) {
     Option opt;
@@ -202,45 +202,45 @@ void modifyBook(const vector<string> &var) {
     getCommand(com, opt, res);
     if (opt == ISBN) {
       checkLen(res, 20);
-      bookisbn.erase(now.isbn, now.isbn, offset);
+      bookisbn.erase(now.isbn_, now.isbn_, offset);
       vector<int> kres;
-      keywordisbn.query(now.isbn, kres);
+      keywordisbn.query(now.isbn_, kres);
       int cnt = 0;
       for (int tnow : kres) {
         Varchar<2> order(inttostring(++cnt));
-        keywordisbn.erase(now.isbn, order, tnow);
+        keywordisbn.erase(now.isbn_, order, tnow);
       }
-      now.isbn = res;
+      now.isbn_ = res;
       cnt = 0;
       for (int tnow : kres) {
         Varchar<2> order(inttostring(++cnt));
-        keywordisbn.insert(now.isbn, order, tnow);
+        keywordisbn.insert(now.isbn_, order, tnow);
       }
-      bookisbn.insert(now.isbn, now.isbn, offset);
+      bookisbn.insert(now.isbn_, now.isbn_, offset);
       book.update(now, offset);
     } else if (opt == AUTHOR) {
       checkLen(res, 60);
-      if (!now.author.empty()) bookauthor.erase(now.author, now.isbn, offset);
-      now.author = res;
-      bookauthor.insert(now.author, now.isbn, offset);
+      if (!now.author_.empty()) bookauthor.erase(now.author_, now.isbn_, offset);
+      now.author_ = res;
+      bookauthor.insert(now.author_, now.isbn_, offset);
       book.update(now, offset);
     } else if (opt == NAME) {
       checkLen(res, 60);
-      if (!now.name.empty()) bookname.erase(now.name, now.isbn, offset);
-      now.name = res;
-      bookname.insert(now.name, now.isbn, offset);
+      if (!now.name_.empty()) bookname.erase(now.name_, now.isbn_, offset);
+      now.name_ = res;
+      bookname.insert(now.name_, now.isbn_, offset);
       book.update(now, offset);
     } else if (opt == KEYWORD) {
       checkLen(res, 60);
       int cnt = 0;
       vector<int> vec;
-      keywordisbn.query(now.isbn, vec);
+      keywordisbn.query(now.isbn_, vec);
       for (auto k : vec) {
         Varchar<2> order(inttostring(++cnt));
         Varchar<60> kwd;
         keyword.read(kwd, k);
-        bookkeyword.erase(kwd, now.isbn, offset);
-        keywordisbn.erase(now.isbn, order, k);
+        bookkeyword.erase(kwd, now.isbn_, offset);
+        keywordisbn.erase(now.isbn_, order, k);
       }
 
       res += '|';
@@ -251,14 +251,14 @@ void modifyBook(const vector<string> &var) {
           Varchar<60> keyw(tmp);
           Varchar<2> order(inttostring(++cnt));
           int offsetk = keyword.write(keyw);
-          bookkeyword.insert(keyw, now.isbn, offset);
-          keywordisbn.insert(now.isbn, order, offsetk);
+          bookkeyword.insert(keyw, now.isbn_, offset);
+          keywordisbn.insert(now.isbn_, order, offsetk);
           tmp.clear();
         } else
           tmp += res[i];
       }
     } else if (opt == PRICE) {
-      now.price = std::stod(res);
+      now.price_ = std::stod(res);
       book.update(now, offset);
     }
   }
@@ -273,18 +273,18 @@ double buyBook(const string &isbn, const long long &quantity) {
   if (!offset.size()) throw Exception("buy: book doesn't exist");
   Book now;
   book.read(now, offset[0]);
-  if (now.stock < quantity) throw Exception("buy: book is not enough");
-  takeFinance(quantity * now.price);
+  if (now.stock_ < quantity) throw Exception("buy: book is not enough");
+  takeFinance(quantity * now.price_);
   std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2)
-            << quantity * now.price << std::endl;
-  now.stock -= quantity;
+            << quantity * now.price_ << std::endl;
+  now.stock_ -= quantity;
   book.update(now, offset[0]);
-  return quantity * now.price;
+  return quantity * now.price_;
 }
 
 void printBook(Book &now) {
   vector<int> kres;
-  keywordisbn.query(now.isbn, kres);
+  keywordisbn.query(now.isbn_, kres);
   string keyw;
   for (int offsetk : kres) {
     Varchar<60> tmp;
@@ -293,10 +293,10 @@ void printBook(Book &now) {
     keyw += '|';
   }
   if (!keyw.empty()) keyw.pop_back();
-  std::cout << now.isbn.str() << '\t' << now.name.str() << '\t'
-            << now.author.str() << '\t' << keyw << '\t'
+  std::cout << now.isbn_.str() << '\t' << now.name_.str() << '\t'
+            << now.author_.str() << '\t' << keyw << '\t'
             << std::setiosflags(std::ios::fixed) << std::setprecision(2)
-            << now.price << '\t' << now.stock << std::endl;
+            << now.price_ << '\t' << now.stock_ << std::endl;
 }
 
 void showBook() {
@@ -351,7 +351,7 @@ void selectBook(const string &isbn) {
   assert(offset.size() <= 1);
   if (offset.size() == 0) {
     Book now;
-    now.isbn = nowisbn;
+    now.isbn_ = nowisbn;
     int res = book.write(now);
     bookisbn.insert(nowisbn, nowisbn, res);
     stack.select(res);
@@ -377,10 +377,10 @@ void showFinance(int t) {
   int pos = (total - t) * delta + sizeof(int);
   while (t--) {
     transaction.read(tmp, pos);
-    if (tmp.opt == 1)
-      income += tmp.var;
+    if (tmp.opt_ == 1)
+      income += tmp.var_;
     else
-      expense += tmp.var;
+      expense += tmp.var_;
     pos += delta;
   }
   std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(2) << "+ "

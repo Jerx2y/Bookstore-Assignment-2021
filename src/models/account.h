@@ -16,10 +16,10 @@ enum Privilege { CUSTOMER = 1, WORKER = 3, ROOT = 7 };
 
 class Account {
  public:
-  Varchar<30> userId;
-  Varchar<30> password;
-  Varchar<30> name;
-  Privilege privilege;
+  Varchar<30> userId_;
+  Varchar<30> password_;
+  Varchar<30> name_;
+  Privilege privilege_;
   Account() = default;
   Account(const string&, const string&, const string&, Privilege);
   void check();
