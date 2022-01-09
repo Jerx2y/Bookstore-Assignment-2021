@@ -35,5 +35,4 @@ jobs:
           cmake .
           make
           ./clean.sh
-          ./asset/localJudge.py
-          .
+          echo . | ./asset/localJudge.py
