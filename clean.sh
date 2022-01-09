@@ -1,1 +1,1 @@
-rm rundata/*
+rm -f rundata/*
