@@ -3,8 +3,6 @@
 > SJTU ACM 班 2021 级 程序设计课程大作业
 
 > [原开发文档](https://hub.fastgit.org/Jerx2y/Bookstore-Assignment-2021/blob/master/Document.md)
->
-> 为了方便实现，WhY 改动了一些内容，最终版本如下：
 
 
 
@@ -39,7 +37,7 @@ class Varchar {
   template <int A>
   friend class Varchar;
  private:
-  char content[maxLength + 1];
+  char content_[maxLength + 1];
  public:
   Varchar();
   Varchar(const std::string &s);
@@ -75,9 +73,9 @@ class Varchar {
 template<class T>
 class Storage {
 private:
-    fstream file;
-    string file_name;
-    int sizeofT = sizeof(T);
+    fstream file_;
+    string file_name_;
+    int sizeofT_ = sizeof(T);
 public:
     Storage() = default;
     bool initialise(string FN = "", int opt = 0);
@@ -179,10 +177,10 @@ enum Privilege {
 
 class Account {
  public:
-  Varchar<30> userId;
-  Varchar<30> password;
-  Varchar<30> name;
-  Privilege privilege;
+  Varchar<30> userId_;
+  Varchar<30> password_;
+  Varchar<30> name_;
+  Privilege privilege_;
   Account() = default;
   Account(const string&, const string&, const string&, Privilege);
   void check();
@@ -194,11 +192,11 @@ class Account {
 ```cpp
 class Book {
  public:
-  Varchar<20> isbn;
-  Varchar<60> name;
-  Varchar<60> author;
-  long long stock;
-  double price;
+  Varchar<20> isbn_;
+  Varchar<60> name_;
+  Varchar<60> author_;
+  long long stock_;
+  double price_;
   Book();
 };
 ```
@@ -207,8 +205,8 @@ class Book {
 
 ```cpp
 struct Transaction {
-    int opt;
-    double var;
+    int opt_;
+    double var_;
     Transaction();
     Transaction(double);
 };
@@ -340,11 +338,10 @@ int main ();
 
 | Authors         | Version |
 | :-------------- | :------ |
-| Alan-Liang, WhY | 4       |
+| Alan-Liang, WhY | 4.1     |
 
 ### 如何修改本文档
 
 1. 请把代码规范调整为您（实现者）使用的代码规范。特别需要注意的地方：文件名（`.cpp` 还是 `.cc`？），命名格式（`PascalCase`, `camelCase` 还是 `snake_case`？），命名规范（用不用 Hungarian Naming Convention？）
-2. 请修改 `data/` 目录下的文件结构来符合您的实现
-3. 请删除您不打算实现的部分和相关说明
-4. 更改本文档时请同步更新上面表格里的 Authors 和 Version
+2. 请删除您不打算实现的部分和相关说明
+3. 更改本文档时请同步更新上面表格里的 Authors 和 Version
