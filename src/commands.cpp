@@ -55,7 +55,6 @@ Ull keywordisbn, bookkeyword, bookisbn, bookauthor, bookname;
 Storage<Transaction> transaction;
 
 void init() {
-#ifdef LOCAL
   bool res = user.initialise("./rundata/accounts");
   userid.initialize("./rundata/accounts.id");
   if (!res) addAccount("root", "sjtu", ROOT, "");
@@ -70,24 +69,23 @@ void init() {
   keywordisbn.initialize("./rundata/keyword.isbn");
 
   transaction.initialise("./rundata/transaction", 1);
-#else
 
-  bool res = user.initialise("accounts");
-  userid.initialize("accounts.id");
-  if (!res) addAccount("root", "sjtu", ROOT, "");
+//  bool res = user.initialise("accounts");
+//  userid.initialize("accounts.id");
+//  if (!res) addAccount("root", "sjtu", ROOT, "");
+//
+//  book.initialise("books");
+//  bookkeyword.initialize("books.keyword");
+//  bookisbn.initialize("books.isbn");
+//  bookauthor.initialize("books.author");
+//  bookname.initialize("books.name");
+//
+//  keyword.initialise("keywords");
+//  keywordisbn.initialize("keyword.isbn");
+//
+//  transaction.initialise("transaction", 1);
 
-  book.initialise("books");
-  bookkeyword.initialize("books.keyword");
-  bookisbn.initialize("books.isbn");
-  bookauthor.initialize("books.author");
-  bookname.initialize("books.name");
-
-  keyword.initialise("keywords");
-  keywordisbn.initialize("keyword.isbn");
-
-  transaction.initialise("transaction", 1);
-
-#endif
+//#endif
 }
 
 // Account
