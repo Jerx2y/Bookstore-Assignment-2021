@@ -1,6 +1,5 @@
 .idea/
 cmake-build-*/
-test*/
 bin/
 *~
 
